@@ -1,6 +1,6 @@
 import {ApolloServer, gql} from "apollo-server";
 
-const tweets = [
+let tweets = [
   {
     id: "1",
     text: "Hello world",
@@ -11,48 +11,69 @@ const tweets = [
   }
 ]
 
+let users = [
+  {
+    id: "1",
+    firstName: "Hira",
+    lastName: "Sanae"
+  },
+  {
+    id: "2",
+    firstName: "Kana",
+    lastName: "Owari"
+  }
+]
 const typeDefs = gql`
     type User {
-        id: ID
-        username: String
+        id: ID!
+        firstName: String!
+        lastName: String!
+        fullName: String!
     }
     type Tweet {
         id: ID
         text: String
         author: User
     }
-    type Query {
-        allTweets: [Tweet]!
-        tweet(id: ID): Tweet
-        ping: String!
-    }
     type Mutation {
         postTweet(text: String, userId: ID): Tweet!
         deleteTweet(id: ID): Boolean
     }
+    type Query {
+        allUsers: [User!]!
+        allTweets: [Tweet]!
+        tweet(id: ID): Tweet
+    }
 `
-
 const resolvers = {
   Query: {
+    allUsers() {
+      console.log("allUsers called")
+      return users
+    },
     allTweets() {
       return tweets
     },
     tweet(root, {id}) { // id === "1"
-      console.log(typeof id)
+      console.log(root)
       return tweets.find(tweet => tweet.id === id)
     },
-    ping() {
-      return "pong"
-    }
   },
   Mutation: {
-    postTweet(_, {text, userId}) {
+    postTweet(root, {text, userId}) {
+      console.log(root)
       const tweet = {
         id: tweets.length + 1,
         text,
       }
       tweets.push(tweet);
       return tweet;
+    }
+  },
+  User: {
+    fullName({firstName, lastName}) {
+      console.log("fullName called")
+      return `${firstName} ${lastName}`
     }
   }
 }
