@@ -10,7 +10,6 @@ let tweets = [
     text: "Hello world 2",
   }
 ]
-
 let users = [
   {
     id: "1",
@@ -23,6 +22,7 @@ let users = [
     lastName: "Owari"
   }
 ]
+
 const typeDefs = gql`
     type User {
         id: ID!
